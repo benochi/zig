@@ -83,3 +83,82 @@ test "while with continue expression"{
 //    try expect(sum == 55);
 //}
 
+test "while with continue" {
+  var sum: u8 = 0;
+  var i: u8 = 0;
+  while (i <= 3) : (i += 1) {
+    if (i == 2) continue;
+    sum += i;
+  }
+  try expect(sum == 4);
+}
+
+test "while with break" {
+  var sum: u8 = 0;
+  var i: u8 = 0;
+  while (i <= 3) : (i += 1) {
+    if (i == 2) break;
+    sum += i;
+  }
+  try expect(sum == 1);
+}
+
+//FOR
+
+test "for" {
+    //character literals are equivalent to integer literals
+    const string = [_]u8{ 'a', 'b', 'c' };
+
+    //for (string, 0..) |character, index| {
+    //    _ = character;
+    //    _ = index;
+    //}
+
+    for (string) |character| {
+        _ = character;
+    }
+
+    //for (string, 0..) |_, index| {
+    //    _ = index;
+    //}
+
+    for (string) |_| {}
+}
+
+fn addFive(x: u32) u32 {
+  return x + 5;
+}
+
+test "function" {
+  const y = addFive(0);
+  try expect(@TypeOf(y) == u32);
+  try expect(y == 5);
+}
+
+fn fibonacci(n: u16) u16 {
+  if (n == 0 or n == 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+test "function recursion" {
+  const x = fibonacci(10);
+  try expect(x == 55);
+}
+
+test "defer" {
+    var x: i16 = 5;
+    {
+        defer x += 2;
+        try expect(x == 5);
+    }
+    try expect(x == 7);
+}
+
+test "multi defer" {
+    var x: f32 = 5;
+    {
+        defer x += 2;
+        defer x /= 2;
+    }
+    try expect(x == 4.5);
+}
