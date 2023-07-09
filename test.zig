@@ -265,3 +265,42 @@ test "switch expression" {
     };
     try expect(x == 1);
 }
+
+//Runtime Safety
+
+test "out of bounds, no safety" {
+    @setRuntimeSafety(false);
+    const a = [3]u8{ 1, 2, 3 };
+    var index: u8 = 5;
+    const b = a[index];
+    _ = b;
+}
+
+fn asciiToUpper(x: u8) u8 {
+    return switch (x) {
+        'a'...'z' => x + 'A' - 'a',
+        'A'...'Z' => x,
+        else => unreachable,
+    };
+}
+
+test "unreachable switch" {
+    try expect(asciiToUpper('a') == 'A');
+    try expect(asciiToUpper('A') == 'A');
+}
+
+fn increment(num: *u8) void {
+    num.* += 1;
+}
+
+test "pointers" {
+    var x: u8 = 1;
+    increment(&x);
+    try expect(x == 2);
+}
+
+test "const pointers" {
+    const x: u8 = 1;
+    var y = &x;
+    y.* += 1;
+}
