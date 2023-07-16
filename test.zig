@@ -2,14 +2,14 @@ const expect = @import("std").testing.expect;
 const std = @import("std");
 
 test "If statement" {
-  const a = true;
-  var x: u16 = 0;
-  if(a){
-    x += 1;
-  } else {
-    x += 2;
-  }
-  try expect(x == 1);
+    const a = true;
+    var x: u16 = 0;
+    if (a) {
+        x += 1;
+    } else {
+        x += 2;
+    }
+    try expect(x == 1);
 }
 
 //test "if statement expression" {
@@ -20,20 +20,20 @@ test "If statement" {
 //}
 
 test "While" {
-  var i: u8 = 2;
-  while (i < 100) {
-    i *= 2;
-  }
-  try expect(i == 128);
+    var i: u8 = 2;
+    while (i < 100) {
+        i *= 2;
+    }
+    try expect(i == 128);
 }
 
 test "While with continue expression" {
-  var sum: u8 = 0;
-  var i: u8 = 1;
-  while (i <= 10) : (i += 1) { 
-    sum += i;
-  }
-  try expect(sum == 55);
+    var sum: u8 = 0;
+    var i: u8 = 1;
+    while (i <= 10) : (i += 1) {
+        sum += i;
+    }
+    try expect(sum == 55);
 }
 
 test "while with continue" {
@@ -57,20 +57,20 @@ test "while with break" {
 }
 
 test "while" {
-  var i: u8 = 2;
-  while (i < 100) {
-    i *= 2;
-  }
-  try expect(i == 128);
+    var i: u8 = 2;
+    while (i < 100) {
+        i *= 2;
+    }
+    try expect(i == 128);
 }
 
-test "while with continue expression"{
-  var sum: u8 = 0;
-  var i: u8 = 1;
-  while (i <= 10) : (i += 1) { 
-    sum +=i;
-  }
-  try expect(sum == 55);
+test "while with continue expression" {
+    var sum: u8 = 0;
+    var i: u8 = 1;
+    while (i <= 10) : (i += 1) {
+        sum += i;
+    }
+    try expect(sum == 55);
 }
 
 //test "while with continue expression" {
@@ -84,23 +84,23 @@ test "while with continue expression"{
 //}
 
 test "while with continue" {
-  var sum: u8 = 0;
-  var i: u8 = 0;
-  while (i <= 3) : (i += 1) {
-    if (i == 2) continue;
-    sum += i;
-  }
-  try expect(sum == 4);
+    var sum: u8 = 0;
+    var i: u8 = 0;
+    while (i <= 3) : (i += 1) {
+        if (i == 2) continue;
+        sum += i;
+    }
+    try expect(sum == 4);
 }
 
 test "while with break" {
-  var sum: u8 = 0;
-  var i: u8 = 0;
-  while (i <= 3) : (i += 1) {
-    if (i == 2) break;
-    sum += i;
-  }
-  try expect(sum == 1);
+    var sum: u8 = 0;
+    var i: u8 = 0;
+    while (i <= 3) : (i += 1) {
+        if (i == 2) break;
+        sum += i;
+    }
+    try expect(sum == 1);
 }
 
 //FOR
@@ -126,23 +126,23 @@ test "for" {
 }
 
 fn addFive(x: u32) u32 {
-  return x + 5;
+    return x + 5;
 }
 
 test "function" {
-  const y = addFive(0);
-  try expect(@TypeOf(y) == u32);
-  try expect(y == 5);
+    const y = addFive(0);
+    try expect(@TypeOf(y) == u32);
+    try expect(y == 5);
 }
 
 fn fibonacci(n: u16) u16 {
-  if (n == 0 or n == 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
+    if (n == 0 or n == 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
 test "function recursion" {
-  const x = fibonacci(10);
-  try expect(x == 55);
+    const x = fibonacci(10);
+    try expect(x == 55);
 }
 
 test "defer" {
@@ -196,8 +196,8 @@ test "returning an error" {
 }
 
 fn failFn() error{Oops}!i32 {
-  try failingFunction();
-  return 12;
+    try failingFunction();
+    return 12;
 }
 
 test "try" {
@@ -302,5 +302,37 @@ test "pointers" {
 test "const pointers" {
     const x: u8 = 1;
     var y = &x;
-    y.* += 1;
+    _ = y;
+    //not allowed, must do _ = y:  y.* += 1;
+}
+
+//pointer sized integers unsigned and signed are the same size:
+test "usize" {
+    try expect(@sizeOf(usize) == @sizeOf(*u8));
+    try expect(@sizeOf(isize) == @sizeOf(*u8));
+}
+
+//Slices, like arrays in JS. slices are able to have an unknown number of elements.
+fn total(values: []const u8) usize {
+    var sum: usize = 0;
+    for (values) |v| sum += v;
+    return sum;
+}
+test "slices" {
+    const array = [_]u8{ 1, 2, 3, 4, 5 };
+    const slice = array[0..3];
+    try expect(total(slice) == 6);
+}
+
+test "slices 2" {
+    const array = [_]u8{ 1, 2, 3, 4, 5 };
+    const slice = array[0..3];
+    try expect(@TypeOf(slice) == *const [3]u8);
+}
+//The syntax x[n..] can also be used for when you want to slice to the end.
+
+test "slices 3" {
+    var array = [_]u8{ 1, 2, 3, 4, 5 };
+    var slice = array[0..];
+    _ = slice;
 }
